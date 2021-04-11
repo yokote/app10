@@ -1,22 +1,21 @@
-import React, {useEffect} from 'react';
-import styles from './App.module.css';
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, login, logout } from "./features/user/userSlice";
 import { auth } from "./firebase";
 import Auth from "./features/auth/Auth";
-import Header from "./features/core/Header";
 
 import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Redirect,
 } from "react-router-dom";
-import Core from './features/core/Core';
-import APost from './features/anonymous/Post';
+import Core from "./features/core/Core";
+import PostWrapper from "./features/core/PostWrapper";
 
 const App: React.FC = () => {
-  const user=useSelector(selectUser)
-  const dispatch = useDispatch()
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   useEffect(() => {
     const unSub = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -39,21 +38,15 @@ const App: React.FC = () => {
     <Router>
       <Switch>
         <Route exact path="/">
-        {user.uid ? (
-          <>
-          <Header />
-          <div className={styles.app}>
-           <Core />
-          </div>
-          </>
-      ) : (
-        <Auth />
-      )}
+          <Auth />
         </Route>
-        <Route path='/u/:username' component={APost} />
+        <Route exact path="/u/:username" component={Core} />
+        <Route exact path="/p/:username/:postId" component={PostWrapper} />
       </Switch>
+      {/*TODO. space & unique*/}
+      {user.uid && <Redirect to={`/u/${user.displayName}`} />}
     </Router>
   );
-}
+};
 
 export default App;

@@ -1,49 +1,6 @@
-.core_title {
-  font-family: "Playball", cursive;
-  font-weight: normal;
-  text-align: center;
-}
-.core_signUp {
+.app {
   display: flex;
-  flex-direction: column;
+  height: 100vh;
+  padding: 30px 80px;
+  background-color: #444447;
 }
-
-.core_text {
-  color: rgb(6, 153, 211);
-  text-align: center;
-  cursor: pointer;
-}
-.core_header {
-  position: sticky;
-  top: 0;
-  background-color: white;
-  padding: 20px;
-  border-bottom: 1px solid lightgray;
-  object-fit: contain;
-  display: flex;
-  z-index: 1;
-  justify-content: space-between;
-}
-.core_btnModal {
-  background-color: transparent;
-  color: gray;
-  padding-top: 3px;
-  font-size: 32px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-}
-
-.core_logout {
-  display: flex;
-  justify-content: flex-end;
-}
-.core_posts {
-  padding: 20px;
-}
-.core_progress {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-}
-
