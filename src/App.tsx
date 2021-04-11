@@ -4,8 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectUser, login, logout } from "./features/user/userSlice";
 import { auth } from "./firebase";
 import Auth from "./features/auth/Auth";
-//import Feed from "./components/Feed";
-//import User from "./components/Users";
+import Header from "./features/core/Header";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+import Core from './features/core/Core';
+import APost from './features/anonymous/Post';
 
 const App: React.FC = () => {
   const user=useSelector(selectUser)
@@ -29,15 +36,23 @@ const App: React.FC = () => {
     };
   }, [dispatch]);
   return (
-    <>
-      {user.uid ? (
-        <div className={styles.app}>
-          foo
-        </div>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+        {user.uid ? (
+          <>
+          <Header />
+          <div className={styles.app}>
+           <Core />
+          </div>
+          </>
       ) : (
         <Auth />
       )}
-    </>
+        </Route>
+        <Route path='/u/:username' component={APost} />
+      </Switch>
+    </Router>
   );
 }
 

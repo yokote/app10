@@ -191,8 +191,6 @@ const Auth: React.FC = () => {
               </>
             )}
 
-
-
           <form className={classes.form} noValidate>
             <TextField
               variant="outlined"
@@ -254,7 +252,6 @@ const Auth: React.FC = () => {
             {isLogin ? "Login" : "Register"}
             </Button>
 
-
             <Grid container>
               <Grid item xs>
                 <span
@@ -284,11 +281,7 @@ const Auth: React.FC = () => {
             >
               SignIn with Google
             </Button>
-
-
-
           </form>
-
 
           <Modal open={openModal} onClose={() => setOpenModal(false)}>
             <div style={getModalStyle()} className={classes.modal}>
@@ -311,8 +304,6 @@ const Auth: React.FC = () => {
               </div>
             </div>
           </Modal>
-
-
         </div>
       </Grid>
     </Grid>
