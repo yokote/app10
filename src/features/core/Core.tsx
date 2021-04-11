@@ -6,6 +6,7 @@ import Feed from "./Feed";
 import Profile from "./Profile";
 import styles from "./Core.module.css";
 import { useParams } from "react-router-dom";
+import TweetInput from "./TweetInput";
 
 const Core = () => {
   const { username } = useParams<{ username: string }>();
@@ -15,7 +16,9 @@ const Core = () => {
     <>
       <Header />
       <div className={styles.app}>
-        <Feed />
+        <Feed>
+          {user.displayName == username ? <TweetInput /> : <Profile />}
+        </Feed>
       </div>
     </>
   );

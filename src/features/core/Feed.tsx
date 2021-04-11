@@ -39,7 +39,7 @@ const Feed: React.FC = (props) => {
 
   return (
     <div className={styles.feed}>
-      <TweetInput />
+      {props.children}
       {posts[0]?.id && (
         <>
           {posts.map((post) => (

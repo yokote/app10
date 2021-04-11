@@ -39,12 +39,12 @@ const App: React.FC = () => {
       <Switch>
         <Route exact path="/">
           <Auth />
+          {/*TODO. space & unique*/}
+          {user.uid && <Redirect to={`/u/${user.displayName}`} />}
         </Route>
         <Route exact path="/u/:username" component={Core} />
         <Route exact path="/p/:username/:postId" component={PostWrapper} />
       </Switch>
-      {/*TODO. space & unique*/}
-      {user.uid && <Redirect to={`/u/${user.displayName}`} />}
     </Router>
   );
 };

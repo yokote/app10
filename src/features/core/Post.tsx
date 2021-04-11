@@ -74,12 +74,14 @@ const Post: React.FC<PROPS> = (props) => {
 
   const newComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     db.collection("posts").doc(props.postId).collection("comments").add({
       avatar: user.photoUrl,
       text: comment,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       username: user.displayName,
     });
+
     setComment("");
   };
   return (
@@ -133,9 +135,9 @@ const Post: React.FC<PROPS> = (props) => {
                   type="text"
                   placeholder="Type new comment..."
                   value={comment}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setComment(e.target.value)
-                  }
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    if (user.uid) setComment(e.target.value);
+                  }}
                 />
                 <button
                   disabled={!comment}
