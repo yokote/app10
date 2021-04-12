@@ -53,6 +53,14 @@ const TweetInput: React.FC = () => {
         }
       );
     } else {
+      db.collection("users").doc(user.displayName).collection("posts").add({
+        username: user.displayName,
+        avatar: user.photoUrl,
+        text: tweetMsg,
+        image: "",
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      /*
       db.collection("posts").doc(user.displayName).set({
         avatar: user.photoUrl,
         text: tweetMsg,
@@ -60,7 +68,7 @@ const TweetInput: React.FC = () => {
         username: user.displayName,
       });
 
-      /*
+
       db.collection("posts").add({
         avatar: user.photoUrl,
         image: "",
