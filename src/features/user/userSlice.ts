@@ -2,25 +2,59 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { db } from "../../firebase";
 
-/*
-export const fetchAsyncGetMyProf = createAsyncThunk("aaaaaaaa", async () => {
-  const promise = db
-    .collection("notes")
-    .get()
-    .then((snapshot) => {
-      const data = [];
-      // assign data
-      return data;
-    });
-
-  const data = await promise;
-  return data;
-});
-*/
 interface USER {
   displayName: string;
   photoUrl: string;
 }
+
+interface MYPROFILE {
+  username: "";
+}
+
+interface PROFILE {
+  userProfile: "";
+  displayName: "";
+  photoUrl: "";
+}
+
+export const fetchAsyncGetMyProf = createAsyncThunk(
+  "myProfile",
+  async (uid: string, api) => {
+    return await db
+      .collection("profiles")
+      .doc(uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          return snapshot.data() as MYPROFILE;
+        } else {
+          api.dispatch(setOpenSettings());
+          return { username: "" };
+        }
+      });
+    /*
+      .catch(() => {
+        return api.rejectWithValue({
+          status: -1,
+          message: "error",
+        });
+      });
+      */
+    //return (await snapshot).data() as MYPROFILE;
+  }
+);
+
+export const fetchAsyncGetProf = createAsyncThunk("taUser", async () => {
+  const snapshot = db.collection("profiles").doc("user1").get();
+  return (await snapshot).data() as PROFILE;
+  /*
+  return {
+    userProfile: "taUser",
+    displayName: "ta  User",
+    photoUrl: "",
+  };
+  */
+});
 
 export const userSlice = createSlice({
   name: "user",
@@ -30,15 +64,13 @@ export const userSlice = createSlice({
       photoUrl: "",
       displayName: "",
       openSettings: false,
-    } /*
-    profiles: [
-      {
-        id: 0,
-        userProfile: 0,
-        displayName: "",
-        photoUrl: "",
-      },
-    ],*/,
+      username: "",
+    },
+    profile: {
+      userProfile: "",
+      displayName: "",
+      photoUrl: "",
+    },
   },
   reducers: {
     login: (state, action) => {
@@ -50,6 +82,7 @@ export const userSlice = createSlice({
         photoUrl: "",
         displayName: "",
         openSettings: false,
+        username: "",
       };
     },
     updateUserProfile: (state, action: PayloadAction<USER>) => {
@@ -65,13 +98,15 @@ export const userSlice = createSlice({
     editDisplayName(state, action) {
       state.user.displayName = action.payload;
     },
-  } /*
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncGetMyProf.fulfilled, (state, action) => {
-      // uidが必要？
-      state.user.myProfile = action.payload;
+      state.user.username = action.payload.username;
     });
-  },*/,
+    builder.addCase(fetchAsyncGetProf.fulfilled, (state, action) => {
+      state.profile = action.payload;
+    });
+  },
 });
 
 export const {

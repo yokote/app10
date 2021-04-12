@@ -1,5 +1,5 @@
 /*Post.tsx*/
-export interface PROPS_POST {
+export interface TTTTT {
   id: number;
   title: string;
 }
