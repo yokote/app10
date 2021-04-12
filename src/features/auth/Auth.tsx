@@ -113,7 +113,7 @@ const Auth: React.FC = () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
   };
   const signInEmail = async () => {
-    const user = await auth.signInWithEmailAndPassword(email, password);
+    await auth.signInWithEmailAndPassword(email, password);
   };
   const signUpEmail = async () => {
     const authUser = await auth.createUserWithEmailAndPassword(email, password);

@@ -29,7 +29,16 @@ export const userSlice = createSlice({
       uid: "",
       photoUrl: "",
       displayName: "",
-    },
+      openSettings: false,
+    } /*
+    profiles: [
+      {
+        id: 0,
+        userProfile: 0,
+        displayName: "",
+        photoUrl: "",
+      },
+    ],*/,
   },
   reducers: {
     login: (state, action) => {
@@ -40,11 +49,21 @@ export const userSlice = createSlice({
         uid: "",
         photoUrl: "",
         displayName: "",
+        openSettings: false,
       };
     },
     updateUserProfile: (state, action: PayloadAction<USER>) => {
       state.user.displayName = action.payload.displayName;
       state.user.photoUrl = action.payload.photoUrl;
+    },
+    setOpenSettings(state) {
+      state.user.openSettings = true;
+    },
+    resetOpenSettings(state) {
+      state.user.openSettings = false;
+    },
+    editDisplayName(state, action) {
+      state.user.displayName = action.payload;
     },
   } /*
   extraReducers: (builder) => {
@@ -55,7 +74,16 @@ export const userSlice = createSlice({
   },*/,
 });
 
-export const { login, logout, updateUserProfile } = userSlice.actions;
+export const {
+  login,
+  logout,
+  updateUserProfile,
+  setOpenSettings,
+  resetOpenSettings,
+  editDisplayName,
+} = userSlice.actions;
 export const selectUser = (state: RootState) => state.user.user;
+export const selectOpenSettings = (state: RootState) =>
+  state.user.user.openSettings;
 
 export default userSlice.reducer;

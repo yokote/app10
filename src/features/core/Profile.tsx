@@ -53,6 +53,10 @@ const Profile = () => {
     setExpanded(!expanded);
   };
 
+  const getAvatar = () => {
+    return user.photoUrl;
+  };
+
   /*
   const sendTest = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,18 +73,16 @@ const Profile = () => {
     <Card className={classes.root}>
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
+          <Avatar
+            aria-label="recipe"
+            className={classes.avatar}
+            src={getAvatar()}
+          />
         }
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
       />
+      {/*
       <CardMedia
         className={classes.media}
         image="/static/images/cards/paella.jpg"
@@ -111,6 +113,8 @@ const Profile = () => {
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
+        */}
+      {/*
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>Method:</Typography>
@@ -142,6 +146,7 @@ const Profile = () => {
           </Typography>
         </CardContent>
       </Collapse>
+      */}
     </Card>
   );
 };
