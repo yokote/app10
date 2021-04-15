@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, logout } from "../user/userSlice";
 import firebase from "firebase/app";
+import { storage } from "../../firebase";
 import { useHistory, useLocation } from "react-router-dom";
-import { setOpenSettings } from "../user/userSlice";
+import { setOpenSettings, updateUserProfile } from "../user/userSlice";
 
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -38,6 +39,10 @@ const useStyles = makeStyles((theme) => ({
     border: "none",
     outline: "none",
     cursor: "pointer",
+  },
+  hiddenIcon: {
+    textAlign: "center",
+    display: "none",
   },
   grow: {
     flexGrow: 1,
@@ -249,10 +254,9 @@ export default function Header() {
                 Logout
               </Button>
 
-              <button
-                className={classes.avatar}
+              <Button
                 onClick={() => {
-                  dispatch(setOpenSettings(true));
+                  history.push("/settings");
                 }}
               >
                 <StyledBadge
@@ -265,7 +269,7 @@ export default function Header() {
                 >
                   <Avatar alt="who?" src={user.photoUrl} />{" "}
                 </StyledBadge>
-              </button>
+              </Button>
             </>
           ) : (
             <div>

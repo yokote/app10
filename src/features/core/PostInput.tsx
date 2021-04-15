@@ -60,23 +60,6 @@ const PostInput: React.FC = () => {
         image: "",
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
-      /*
-      db.collection("posts").doc(user.displayName).set({
-        avatar: user.photoUrl,
-        text: postMsg,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        username: user.displayName,
-      });
-
-
-      db.collection("posts").add({
-        avatar: user.photoUrl,
-        image: "",
-        text: postMsg,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        username: user.displayName,
-      });
-      */
     }
     setPostImage(null);
     setPostMsg("");

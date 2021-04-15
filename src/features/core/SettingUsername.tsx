@@ -88,46 +88,38 @@ const customStyles = {
   },
 };
 
-const Settings = () => {
+const SettingUsername = () => {
   const classes = useStyles();
   const user = useSelector(selectUser);
+  const openSettings = useSelector(selectOpenSettings);
   const dispatch = useDispatch();
-
+  const history = useHistory();
+  const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [openModal4Err, setOpenModal4Err] = React.useState(false);
   const [errMessage, setErrMessage] = useState("");
+  const [username, setUsername] = useState("");
 
-  const [avatarImage, setAvatarImage] = useState<File | null>(null);
+  const updateUsername = async (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
 
-  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files![0]) {
-      setAvatarImage(e.target.files![0]);
-      e.target.value = "";
+    const snapshot = await db
+      .collection("profiles")
+      .where("username", "==", username)
+      .get();
+    if (snapshot.size) {
+      // 同一ユーザ名が存在した場合
+      setErrMessage("This username is already in use by another account.");
+      setOpenModal4Err(true);
+      return;
+    } else {
+      db.collection("profiles")
+        .doc(user.uid)
+        .set({ username: username }, { merge: true })
+        .then(() => {
+          dispatch(editUsername(username));
+          history.push(`/u/${username}`);
+        });
     }
-  };
-
-  const updateAvatar = async () => {
-    let url = "";
-    if (avatarImage) {
-      const S =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      const N = 16;
-      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
-        .map((n) => S[n % S.length])
-        .join("");
-      const fileName = randomChar + "_" + avatarImage.name;
-      await storage.ref(`avatars/${fileName}`).put(avatarImage);
-      url = await storage.ref("avatars").child(fileName).getDownloadURL();
-    }
-    await firebase.auth().currentUser?.updateProfile({
-      displayName: user.displayName,
-      photoURL: url,
-    });
-    await dispatch(
-      updateUserProfile({
-        displayName: user.displayName,
-        photoUrl: url,
-      })
-    );
   };
 
   //Modal.setAppElement("#root");
@@ -144,30 +136,40 @@ const Settings = () => {
               <Alert severity="error">{errMessage}</Alert>
             </Collapse>
 
-            <Box textAlign="center">
-              <Button>
-                <label>
-                  <Avatar
-                    className={styles.login_addIconLoaded}
-                    alt={user.username}
-                    src={user.photoUrl}
-                  />{" "}
-                  <input
-                    className={styles.login_hiddenIcon}
-                    type="file"
-                    onChange={onChangeImageHandler}
-                  />
-                </label>
-              </Button>
-            </Box>
-
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={username}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (
+                  e.target.value.length == 0 ||
+                  e.target.value.match(/^[A-z0-9]+$/)
+                ) {
+                  setOpenModal4Err(false);
+                } else {
+                  setErrMessage(
+                    "使用可能な文字列はアルファベットと数字のみです。"
+                  );
+                  setOpenModal4Err(true);
+                }
+                setUsername(e.target.value);
+              }}
+            />
             <br />
             <br />
             <Button
+              disabled={username.length < 1}
               variant="contained"
               color="primary"
               fullWidth
-              onClick={updateAvatar}
+              onClick={updateUsername}
             >
               Update
             </Button>
@@ -178,4 +180,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default SettingUsername;

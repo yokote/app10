@@ -117,14 +117,7 @@ const Auth: React.FC = () => {
         setResetEmail("");
       });
   };
-  /*
-  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files![0]) {
-      setAvatarImage(e.target.files![0]);
-      e.target.value = "";
-    }
-  };
-*/
+
   const signInGoogle = async () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
   };
@@ -147,7 +140,7 @@ const Auth: React.FC = () => {
           dispatch(editUsername(profile.username));
           history.push(`/u/${profile.username}`);
         } else {
-          history.push("/settings");
+          history.push("/settings/username");
         }
       });
   };
@@ -166,7 +159,7 @@ const Auth: React.FC = () => {
       })
     );
 
-    history.push("/settings");
+    history.push("/settings/username");
   };
   return (
     <Grid container component="main" className={classes.root}>

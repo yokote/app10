@@ -18,6 +18,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import Core from "./features/core/Core";
+import SettingUsername from "./features/core/SettingUsername";
 import Settings from "./features/core/Settings";
 import PostWrapper from "./features/core/PostWrapper";
 
@@ -26,9 +27,9 @@ const App: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const unSub = auth.onAuthStateChanged(async (authUser) => {
+    const unSub = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
-        await dispatch(
+        dispatch(
           login({
             uid: authUser.uid,
             photoUrl: authUser.photoURL,
@@ -36,7 +37,7 @@ const App: React.FC = () => {
           })
         );
 
-        //await dispatch(fetchAsyncGetMyProf(authUser.uid));
+        dispatch(fetchAsyncGetMyProf(authUser.uid));
       } else {
         dispatch(logout());
       }
@@ -56,6 +57,7 @@ const App: React.FC = () => {
         <Route exact path="/u/:username" component={Core} />
         <Route exact path="/p/:username/:postId" component={PostWrapper} />
         <Route exact path="/settings" component={Settings} />
+        <Route exact path="/settings/username" component={SettingUsername} />
       </Switch>
     </Router>
   );
