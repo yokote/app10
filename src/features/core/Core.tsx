@@ -7,7 +7,6 @@ import Profile from "./Profile";
 import styles from "./Core.module.css";
 import { useParams } from "react-router-dom";
 import PostInput from "./PostInput";
-import Settings from "./Settings";
 
 const Core = () => {
   const { username } = useParams<{ username: string }>();
@@ -16,7 +15,6 @@ const Core = () => {
   return (
     <>
       <Header />
-      <Settings />
       <div className={styles.app}>
         <Feed>{user.username == username ? <PostInput /> : <Profile />}</Feed>
       </div>

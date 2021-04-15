@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   selectUser,
   login,
@@ -23,25 +24,29 @@ import PostWrapper from "./features/core/PostWrapper";
 const App: React.FC = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    const unSub = auth.onAuthStateChanged((authUser) => {
+    const unSub = auth.onAuthStateChanged(async (authUser) => {
       if (authUser) {
-        dispatch(
+        await dispatch(
           login({
             uid: authUser.uid,
             photoUrl: authUser.photoURL,
             displayName: authUser.displayName,
           })
         );
-        dispatch(fetchAsyncGetMyProf(authUser.uid));
+
+        //await dispatch(fetchAsyncGetMyProf(authUser.uid));
       } else {
         dispatch(logout());
       }
     });
+
     return () => {
       unSub();
     };
   }, [dispatch]);
+
   return (
     <Router>
       <Switch>
@@ -55,10 +60,5 @@ const App: React.FC = () => {
     </Router>
   );
 };
-/*
-          TODO. space & unique
-          {user?.username && <Redirect to={`/u/${user.username}`} />}
-          {!user?.username && dispatch(setOpenSettings(true))}
 
-*/
 export default App;

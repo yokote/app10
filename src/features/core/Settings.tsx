@@ -117,6 +117,7 @@ const Settings = () => {
         .set({ username: username }, { merge: true })
         .then(() => {
           //dispatch(setOpenSettings(false));
+          dispatch(editUsername(username));
           history.push(`/u/${username}`);
         });
     }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectUser } from "../user/userSlice";
+import { selectUser, logout } from "../user/userSlice";
 import firebase from "firebase/app";
 import { useHistory, useLocation } from "react-router-dom";
 import { setOpenSettings } from "../user/userSlice";
@@ -204,7 +204,13 @@ export default function Header() {
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            demo
+            <Button
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              demo
+            </Button>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -230,6 +236,7 @@ export default function Header() {
                     .signOut()
                     .then(() => {
                       // Sign-out successful.
+                      dispatch(logout());
                       if (location.pathname == "/settings") {
                         history.push("/");
                       }

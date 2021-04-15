@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import styles from "./Auth.module.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { updateUserProfile, setOpenSettings } from "../user/userSlice";
-import { auth, provider, storage } from "../../firebase";
+import {
+  updateUserProfile,
+  setOpenSettings,
+  selectUser,
+  login,
+  fetchAsyncGetMyProf,
+  editUsername,
+} from "../user/userSlice";
+import { auth, provider, storage, db } from "../../firebase";
 import {
   Avatar,
   Button,
@@ -79,9 +86,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+interface MYPROFILE {
+  username: "";
+}
+
 const Auth: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -117,36 +129,44 @@ const Auth: React.FC = () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
   };
   const signInEmail = async () => {
-    await auth.signInWithEmailAndPassword(email, password);
+    await auth
+      .signInWithEmailAndPassword(email, password)
+      .then(async (userCredential) => {
+        const profile = await db
+          .collection("profiles")
+          .doc(userCredential.user!.uid)
+          .get()
+          .then((snapshot) => {
+            if (snapshot.exists) {
+              return snapshot.data() as MYPROFILE;
+            } else {
+              return { username: "" };
+            }
+          });
+        if (profile.username) {
+          dispatch(editUsername(profile.username));
+          history.push(`/u/${profile.username}`);
+        } else {
+          history.push("/settings");
+        }
+      });
   };
   const signUpEmail = async () => {
     const authUser = await auth.createUserWithEmailAndPassword(email, password);
-    let url = "";
-    /*
-    if (avatarImage) {
-      const S =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      const N = 16;
-      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
-        .map((n) => S[n % S.length])
-        .join("");
-      const fileName = randomChar + "_" + avatarImage.name;
-      await storage.ref(`avatars/${fileName}`).put(avatarImage);
-      url = await storage.ref("avatars").child(fileName).getDownloadURL();
-    }
+
     await authUser.user?.updateProfile({
-      displayName: username,
-      photoURL: url,
+      displayName: displayName,
+      photoURL: "",
     });
-    */
+
     dispatch(
       updateUserProfile({
         displayName: displayName,
-        photoUrl: url,
+        photoUrl: "",
       })
     );
+
     history.push("/settings");
-    //dispatch(setOpenSettings(true));
   };
   return (
     <Grid container component="main" className={classes.root}>
@@ -253,7 +273,9 @@ const Auth: React.FC = () => {
                       try {
                         await signInEmail();
                       } catch (err) {
-                        alert(err.message);
+                        setErrMessage(err.message);
+                        setOpenModal4Err(true);
+                        //alert(err.message);
                       }
                     }
                   : async () => {

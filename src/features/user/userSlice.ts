@@ -28,7 +28,7 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
         if (snapshot.exists) {
           return snapshot.data() as MYPROFILE;
         } else {
-          api.dispatch(setOpenSettings(true));
+          //api.dispatch(setOpenSettings(true));
           return { username: "" };
         }
       });
@@ -98,6 +98,7 @@ export const userSlice = createSlice({
       state.user.displayName = action.payload;
     },
   },
+  /*
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncGetMyProf.fulfilled, (state, action) => {
       state.user.username = action.payload.username;
@@ -106,6 +107,7 @@ export const userSlice = createSlice({
       state.profile = action.payload;
     });
   },
+  */
 });
 
 export const {
