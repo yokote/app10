@@ -36,7 +36,7 @@ const App: React.FC = () => {
             displayName: authUser.displayName,
           })
         );
-
+        // TODO. login時、fetchが２回走る
         dispatch(fetchAsyncGetMyProf(authUser.uid));
       } else {
         dispatch(logout());
