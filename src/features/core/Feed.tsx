@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Feed.module.css";
 import { db } from "../../firebase";
-import TweetInput from "./TweetInput";
+import PostInput from "./PostInput";
 import Post from "./Post";
 
 const Feed: React.FC = (props) => {

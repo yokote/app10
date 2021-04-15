@@ -1,21 +1,79 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import Modal from "react-modal";
-
+import { db, storage } from "../../firebase";
+import firebase from "firebase/app";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectUser,
   selectOpenSettings,
-  resetOpenSettings,
+  setOpenSettings,
+  editUsername,
   editDisplayName,
+  updateUserProfile,
 } from "../user/userSlice";
 import styles from "./Settings.module.css";
 
 import Profile from "./Profile";
 
-import { Button, TextField, IconButton } from "@material-ui/core";
-//import { MdAddAPhoto } from "react-icons/md";
+import {
+  Button,
+  TextField,
+  IconButton,
+  Grid,
+  CssBaseline,
+  Paper,
+  makeStyles,
+  Box,
+} from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
+import Collapse from "@material-ui/core/Collapse";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Avatar from "@material-ui/core/Avatar";
+import Header from "./Header";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: "100vh",
+  },
+  image: {
+    backgroundImage:
+      "url(https://images.unsplash.com/photo-1617340646579-097994590c97?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80)",
+    backgroundRepeat: "no-repeat",
+    backgroundColor:
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  modal: {
+    outline: "none",
+    position: "absolute",
+    width: 400,
+    borderRadius: 10,
+    backgroundColor: "white",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(10),
+  },
+}));
 
 const customStyles = {
   content: {
@@ -31,69 +89,147 @@ const customStyles = {
 };
 
 const Settings = () => {
+  const classes = useStyles();
   const user = useSelector(selectUser);
   const openSettings = useSelector(selectOpenSettings);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const [avatarImage, setAvatarImage] = useState<File | null>(null);
+  const [openModal4Err, setOpenModal4Err] = React.useState(false);
+  const [errMessage, setErrMessage] = useState("");
+  const [username, setUsername] = useState("");
 
-  const [image, setImage] = useState<File | null>(null);
-
-  const updateProfile = async (e: React.MouseEvent<HTMLElement>) => {
+  const updateUsername = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    //const packet = { id: profile.id, nickName: profile.nickName, img: image };
+
+    const snapshot = await db
+      .collection("profiles")
+      .where("username", "==", username)
+      .get();
+    if (snapshot.size) {
+      // 同一ユーザ名が存在した場合
+      setErrMessage("This username is already in use by another account.");
+      setOpenModal4Err(true);
+      return;
+    } else {
+      db.collection("profiles")
+        .doc(user.uid)
+        .set({ username: username }, { merge: true })
+        .then(() => {
+          //dispatch(setOpenSettings(false));
+          history.push(`/u/${username}`);
+        });
+    }
+    /*
+    let url = "";
+    if (avatarImage) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + avatarImage.name;
+      await storage.ref(`avatars/${fileName}`).put(avatarImage);
+      url = await storage.ref("avatars").child(fileName).getDownloadURL();
+    }
+    await firebase.auth().currentUser?.updateProfile({
+      displayName: user.displayName,
+      photoURL: url,
+    });
+    await dispatch(
+      updateUserProfile({
+        displayName: user.displayName,
+        photoUrl: url,
+      })
+    );
+*/
   };
 
-  const handlerEditPicture = () => {
-    const fileInput = document.getElementById("imageInput");
-    fileInput?.click();
+  /*
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files![0]) {
+      setAvatarImage(e.target.files![0]);
+      e.target.value = "";
+    }
   };
+*/
+  //Modal.setAppElement("#root");
 
   return (
-    <Modal
-      isOpen={openSettings}
-      onRequestClose={async () => {
-        await dispatch(resetOpenSettings());
-      }}
-      style={customStyles}
-    >
-      <form className={styles.core_signUp}>
-        <h3 className={styles.core_title}>Profile</h3>
+    <>
+      <Header />
+      <Grid container component="main" className={classes.root}>
+        <CssBaseline />
+        <Grid item xs={false} sm={4} md={7} className={classes.image} />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <div className={classes.paper}>
+            <Collapse in={openModal4Err}>
+              <Alert severity="error">{errMessage}</Alert>
+            </Collapse>
+            {/*}
+            <Box textAlign="center">
+              <IconButton>
+                <label>
+                  <AccountCircleIcon
+                    fontSize="large"
+                    className={
+                      avatarImage
+                        ? styles.login_addIconLoaded
+                        : styles.login_addIcon
+                    }
+                  />
+                  <input
+                    className={styles.login_hiddenIcon}
+                    type="file"
+                    onChange={onChangeImageHandler}
+                  />
+                </label>
+              </IconButton>
+            </Box>
+                  */}
 
-        <br />
-
-        {/* bug. usernameをまだ作っていないのでURLと一致しない */}
-        <TextField
-          placeholder="displayName"
-          type="text"
-          value={user?.displayName}
-          onChange={(e) => dispatch(editDisplayName(e.target.value))}
-        />
-
-        <input
-          type="file"
-          id="imageInput"
-          hidden={true}
-          onChange={(e) => setImage(e.target.files![0])}
-        />
-        <br />
-        <IconButton onClick={handlerEditPicture}>
-          {user.photoUrl ? (
-            <Avatar aria-label="recipe" src={user.photoUrl} />
-          ) : (
-            <AccountCircleIcon fontSize="large" />
-          )}
-        </IconButton>
-        <br />
-        <Button
-          disabled={!user?.displayName}
-          variant="contained"
-          color="primary"
-          type="submit"
-          onClick={updateProfile}
-        >
-          Update
-        </Button>
-      </form>
-    </Modal>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={username}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                if (
+                  e.target.value.length == 0 ||
+                  e.target.value.match(/^[A-z0-9]+$/)
+                ) {
+                  setOpenModal4Err(false);
+                } else {
+                  setErrMessage(
+                    "使用可能な文字列はアルファベットと数字のみです。"
+                  );
+                  setOpenModal4Err(true);
+                }
+                setUsername(e.target.value);
+              }}
+            />
+            <br />
+            <br />
+            <Button
+              disabled={username.length < 1}
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={updateUsername}
+            >
+              Update
+            </Button>
+          </div>
+        </Grid>
+      </Grid>
+    </>
   );
 };
 

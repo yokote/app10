@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./TweetInput.module.css";
+import styles from "./PostInput.module.css";
 import { storage, db, auth } from "../../firebase";
 import firebase from "firebase/app";
 import { useSelector } from "react-redux";
@@ -7,30 +7,30 @@ import { selectUser } from "../user/userSlice";
 import { Avatar, Button, IconButton } from "@material-ui/core";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 
-const TweetInput: React.FC = () => {
+const PostInput: React.FC = () => {
   const user = useSelector(selectUser);
-  const [tweetImage, setTweetImage] = useState<File | null>(null);
-  const [tweetMsg, setTweetMsg] = useState("");
+  const [postImage, setPostImage] = useState<File | null>(null);
+  const [postMsg, setPostMsg] = useState("");
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
-      setTweetImage(e.target.files![0]);
+      setPostImage(e.target.files![0]);
       e.target.value = "";
     }
   };
 
-  const sendTweet = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendPost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (tweetImage) {
+    if (postImage) {
       const S =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       const N = 16;
       const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
         .map((n) => S[n % S.length])
         .join("");
-      const fileName = randomChar + "_" + tweetImage.name;
-      const uploadTweetImg = storage.ref(`images/${fileName}`).put(tweetImage);
-      uploadTweetImg.on(
+      const fileName = randomChar + "_" + postImage.name;
+      const uploadPostImg = storage.ref(`images/${fileName}`).put(postImage);
+      uploadPostImg.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
         () => {},
         (err) => {
@@ -45,7 +45,7 @@ const TweetInput: React.FC = () => {
               await db.collection("posts").add({
                 avatar: user.photoUrl,
                 image: url,
-                text: tweetMsg,
+                text: postMsg,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 username: user.displayName,
               });
@@ -56,14 +56,14 @@ const TweetInput: React.FC = () => {
       db.collection("users").doc(user.displayName).collection("posts").add({
         username: user.displayName,
         avatar: user.photoUrl,
-        text: tweetMsg,
+        text: postMsg,
         image: "",
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
       /*
       db.collection("posts").doc(user.displayName).set({
         avatar: user.photoUrl,
-        text: tweetMsg,
+        text: postMsg,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         username: user.displayName,
       });
@@ -72,44 +72,44 @@ const TweetInput: React.FC = () => {
       db.collection("posts").add({
         avatar: user.photoUrl,
         image: "",
-        text: tweetMsg,
+        text: postMsg,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         username: user.displayName,
       });
       */
     }
-    setTweetImage(null);
-    setTweetMsg("");
+    setPostImage(null);
+    setPostMsg("");
   };
 
   return (
     <>
-      <form onSubmit={sendTweet}>
-        <div className={styles.tweet_form}>
+      <form onSubmit={sendPost}>
+        <div className={styles.post_form}>
           <Avatar
-            className={styles.tweet_avatar}
+            className={styles.post_avatar}
             src={user.photoUrl}
             onClick={async () => {
               await auth.signOut();
             }}
           />
           <input
-            className={styles.tweet_input}
+            className={styles.post_input}
             placeholder="What's happening?"
             type="text"
             autoFocus
-            value={tweetMsg}
-            onChange={(e) => setTweetMsg(e.target.value)}
+            value={postMsg}
+            onChange={(e) => setPostMsg(e.target.value)}
           />
           <IconButton>
             <label>
               <AddAPhotoIcon
                 className={
-                  tweetImage ? styles.tweet_addIconLoaded : styles.tweet_addIcon
+                  postImage ? styles.post_addIconLoaded : styles.post_addIcon
                 }
               />
               <input
-                className={styles.tweet_hiddenIcon}
+                className={styles.post_hiddenIcon}
                 type="file"
                 onChange={onChangeImageHandler}
               />
@@ -119,16 +119,14 @@ const TweetInput: React.FC = () => {
 
         <Button
           type="submit"
-          disabled={!tweetMsg}
-          className={
-            tweetMsg ? styles.tweet_sendBtn : styles.tweet_sendDisableBtn
-          }
+          disabled={!postMsg}
+          className={postMsg ? styles.post_sendBtn : styles.post_sendDisableBtn}
         >
-          Tweet
+          Post
         </Button>
       </form>
     </>
   );
 };
 
-export default TweetInput;
+export default PostInput;

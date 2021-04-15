@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../user/userSlice";
 import firebase from "firebase/app";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { setOpenSettings } from "../user/userSlice";
 
 import { fade, makeStyles } from "@material-ui/core/styles";
@@ -139,6 +139,7 @@ export default function Header() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const history = useHistory();
+  const location = useLocation();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -229,6 +230,9 @@ export default function Header() {
                     .signOut()
                     .then(() => {
                       // Sign-out successful.
+                      if (location.pathname == "/settings") {
+                        history.push("/");
+                      }
                     })
                     .catch((error) => {
                       // An error happened.
@@ -241,7 +245,7 @@ export default function Header() {
               <button
                 className={classes.avatar}
                 onClick={() => {
-                  dispatch(setOpenSettings());
+                  dispatch(setOpenSettings(true));
                 }}
               >
                 <StyledBadge

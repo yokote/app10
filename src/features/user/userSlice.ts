@@ -28,7 +28,7 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
         if (snapshot.exists) {
           return snapshot.data() as MYPROFILE;
         } else {
-          api.dispatch(setOpenSettings());
+          api.dispatch(setOpenSettings(true));
           return { username: "" };
         }
       });
@@ -40,7 +40,6 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
         });
       });
       */
-    //return (await snapshot).data() as MYPROFILE;
   }
 );
 
@@ -89,11 +88,11 @@ export const userSlice = createSlice({
       state.user.displayName = action.payload.displayName;
       state.user.photoUrl = action.payload.photoUrl;
     },
-    setOpenSettings(state) {
-      state.user.openSettings = true;
+    setOpenSettings(state, action) {
+      state.user.openSettings = action.payload;
     },
-    resetOpenSettings(state) {
-      state.user.openSettings = false;
+    editUsername(state, action) {
+      state.user.username = action.payload;
     },
     editDisplayName(state, action) {
       state.user.displayName = action.payload;
@@ -114,8 +113,8 @@ export const {
   logout,
   updateUserProfile,
   setOpenSettings,
-  resetOpenSettings,
   editDisplayName,
+  editUsername,
 } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user.user;
 export const selectOpenSettings = (state: RootState) =>

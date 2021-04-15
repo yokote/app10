@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styles from "./Auth.module.css";
 import { useDispatch } from "react-redux";
-import { updateUserProfile } from "../user/userSlice";
+import { useHistory } from "react-router-dom";
+import { updateUserProfile, setOpenSettings } from "../user/userSlice";
 import { auth, provider, storage } from "../../firebase";
-
 import {
   Avatar,
   Button,
@@ -17,7 +17,8 @@ import {
   IconButton,
   Box,
 } from "@material-ui/core";
-
+import Alert from "@material-ui/lab/Alert";
+import Collapse from "@material-ui/core/Collapse";
 import SendIcon from "@material-ui/icons/Send";
 import CameraIcon from "@material-ui/icons/Camera";
 import EmailIcon from "@material-ui/icons/Email";
@@ -81,13 +82,16 @@ const useStyles = makeStyles((theme) => ({
 const Auth: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [isLogin, setIsLogin] = useState(true);
   const [openModal, setOpenModal] = React.useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [openModal4Err, setOpenModal4Err] = React.useState(false);
+  const [errMessage, setErrMessage] = useState("");
 
   const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
     await auth
@@ -101,14 +105,14 @@ const Auth: React.FC = () => {
         setResetEmail("");
       });
   };
-
+  /*
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
       setAvatarImage(e.target.files![0]);
       e.target.value = "";
     }
   };
-
+*/
   const signInGoogle = async () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
   };
@@ -118,6 +122,7 @@ const Auth: React.FC = () => {
   const signUpEmail = async () => {
     const authUser = await auth.createUserWithEmailAndPassword(email, password);
     let url = "";
+    /*
     if (avatarImage) {
       const S =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -133,12 +138,15 @@ const Auth: React.FC = () => {
       displayName: username,
       photoURL: url,
     });
+    */
     dispatch(
       updateUserProfile({
-        displayName: username,
+        displayName: displayName,
         photoUrl: url,
       })
     );
+    history.push("/settings");
+    //dispatch(setOpenSettings(true));
   };
   return (
     <Grid container component="main" className={classes.root}>
@@ -149,10 +157,14 @@ const Auth: React.FC = () => {
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
+
           <Typography component="h1" variant="h5">
             {isLogin ? "Login" : "Register"}
           </Typography>
 
+          <Collapse in={openModal4Err}>
+            <Alert severity="error">{errMessage}</Alert>
+          </Collapse>
           {!isLogin && (
             <>
               <TextField
@@ -160,16 +172,17 @@ const Auth: React.FC = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="displayName"
+                label="Display Name"
+                name="displayName"
+                autoComplete="displayName"
                 autoFocus
-                value={username}
+                value={displayName}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUsername(e.target.value);
+                  setDisplayName(e.target.value);
                 }}
               />
+              {/*
               <Box textAlign="center">
                 <IconButton>
                   <label>
@@ -189,9 +202,9 @@ const Auth: React.FC = () => {
                   </label>
                 </IconButton>
               </Box>
+                    */}
             </>
           )}
-
           <form className={classes.form} noValidate>
             <TextField
               variant="outlined"
@@ -226,8 +239,8 @@ const Auth: React.FC = () => {
             <Button
               disabled={
                 isLogin
-                  ? !email || password.length < 6
-                  : !username || !email || password.length < 6 || !avatarImage
+                  ? !email || password.length < 1
+                  : !displayName || !email || password.length < 1
               }
               fullWidth
               variant="contained"
@@ -247,7 +260,8 @@ const Auth: React.FC = () => {
                       try {
                         await signUpEmail();
                       } catch (err) {
-                        alert(err.message);
+                        setErrMessage(err.message);
+                        setOpenModal4Err(true);
                       }
                     }
               }
@@ -273,7 +287,7 @@ const Auth: React.FC = () => {
                 </span>
               </Grid>
             </Grid>
-
+            {/*
             <Button
               fullWidth
               variant="contained"
@@ -284,6 +298,7 @@ const Auth: React.FC = () => {
             >
               SignIn with Google
             </Button>
+*/}
           </form>
 
           <Modal open={openModal} onClose={() => setOpenModal(false)}>

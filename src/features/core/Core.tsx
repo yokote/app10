@@ -6,7 +6,7 @@ import Feed from "./Feed";
 import Profile from "./Profile";
 import styles from "./Core.module.css";
 import { useParams } from "react-router-dom";
-import TweetInput from "./TweetInput";
+import PostInput from "./PostInput";
 import Settings from "./Settings";
 
 const Core = () => {
@@ -18,9 +18,7 @@ const Core = () => {
       <Header />
       <Settings />
       <div className={styles.app}>
-        <Feed>
-          {user.displayName == username ? <TweetInput /> : <Profile />}
-        </Feed>
+        <Feed>{user.username == username ? <PostInput /> : <Profile />}</Feed>
       </div>
     </>
   );

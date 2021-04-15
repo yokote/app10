@@ -17,6 +17,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import Core from "./features/core/Core";
+import Settings from "./features/core/Settings";
 import PostWrapper from "./features/core/PostWrapper";
 
 const App: React.FC = () => {
@@ -46,14 +47,18 @@ const App: React.FC = () => {
       <Switch>
         <Route exact path="/">
           <Auth />
-          {/*TODO. space & unique*/}
-          {user.uid && <Redirect to={`/u/${user.displayName}`} />}
         </Route>
         <Route exact path="/u/:username" component={Core} />
         <Route exact path="/p/:username/:postId" component={PostWrapper} />
+        <Route exact path="/settings" component={Settings} />
       </Switch>
     </Router>
   );
 };
+/*
+          TODO. space & unique
+          {user?.username && <Redirect to={`/u/${user.username}`} />}
+          {!user?.username && dispatch(setOpenSettings(true))}
 
+*/
 export default App;
