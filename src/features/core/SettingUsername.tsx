@@ -9,8 +9,6 @@ import {
   selectOpenBackdrop,
   setOpenBackdrop,
   editUsername,
-  editDisplayName,
-  updateUserProfile,
 } from "../user/userSlice";
 import styles from "./Settings.module.css";
 
@@ -24,12 +22,10 @@ import {
   CssBaseline,
   Paper,
   makeStyles,
-  Box,
+  FormHelperText,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import Avatar from "@material-ui/core/Avatar";
 import Header from "./Header";
 
 const useStyles = makeStyles((theme) => ({
@@ -75,19 +71,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const customStyles = {
-  content: {
-    top: "55%",
-    left: "50%",
-
-    width: 280,
-    height: 350,
-    padding: "50px",
-
-    transform: "translate(-50%, -50%)",
-  },
-};
-
 const SettingUsername = () => {
   const classes = useStyles();
   const user = useSelector(selectUser);
@@ -102,7 +85,7 @@ const SettingUsername = () => {
   // bug. ログインしていない状態で誰でもupdateできる
   const updateUsername = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-
+    await dispatch(setOpenBackdrop(true));
     const snapshot = await db
       .collection("profiles")
       .where("username", "==", username)
@@ -111,9 +94,7 @@ const SettingUsername = () => {
       // 同一ユーザ名が存在した場合
       setErrMessage("This username is already in use by another account.");
       setOpenModal4Err(true);
-      return;
     } else {
-      //await dispatch(setOpenBackdrop(true));
       await db
         .collection("profiles")
         .doc(user.uid)
@@ -122,8 +103,8 @@ const SettingUsername = () => {
           dispatch(editUsername(username));
           history.push(`/u/${username}`);
         });
-      //await dispatch(setOpenBackdrop(false));
     }
+    await dispatch(setOpenBackdrop(false));
   };
 
   //Modal.setAppElement("#root");
@@ -139,6 +120,15 @@ const SettingUsername = () => {
             <Collapse in={openModal4Err}>
               <Alert severity="error">{errMessage}</Alert>
             </Collapse>
+
+            <Grid container>
+              <Grid item xs>
+                <FormHelperText>
+                  usernameは後から変更できません。
+                </FormHelperText>
+              </Grid>
+              <Grid item></Grid>
+            </Grid>
 
             <TextField
               variant="outlined"

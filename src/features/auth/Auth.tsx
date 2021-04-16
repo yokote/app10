@@ -128,6 +128,7 @@ const Auth: React.FC = () => {
     }
   };
   const signInEmail = async () => {
+    await dispatch(setOpenBackdrop(true));
     await auth
       .signInWithEmailAndPassword(email, password)
       .then(async (userCredential) => {
@@ -151,6 +152,7 @@ const Auth: React.FC = () => {
       });
   };
   const signUpEmail = async () => {
+    await dispatch(setOpenBackdrop(true));
     const authUser = await auth.createUserWithEmailAndPassword(email, password);
 
     await authUser.user?.updateProfile({

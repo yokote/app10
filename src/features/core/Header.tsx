@@ -218,9 +218,6 @@ export default function Header() {
             </Button>
           </Typography>
           <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
             <InputBase
               placeholder="Search…"
               classes={{
@@ -229,6 +226,10 @@ export default function Header() {
               }}
               inputProps={{ "aria-label": "search" }}
             />
+            <Button>
+              {" "}
+              <SearchIcon />
+            </Button>
           </div>
 
           <div className={classes.grow} />
