@@ -62,7 +62,6 @@ export const userSlice = createSlice({
       uid: "",
       photoUrl: "",
       displayName: "",
-      openSettings: false,
       username: "",
     },
     profile: {
@@ -70,6 +69,7 @@ export const userSlice = createSlice({
       displayName: "",
       photoUrl: "",
     },
+    openBackdrop: false,
   },
   reducers: {
     login: (state, action) => {
@@ -80,16 +80,16 @@ export const userSlice = createSlice({
         uid: "",
         photoUrl: "",
         displayName: "",
-        openSettings: false,
         username: "",
       };
+      state.openBackdrop = false;
     },
     updateUserProfile: (state, action: PayloadAction<USER>) => {
       state.user.displayName = action.payload.displayName;
       state.user.photoUrl = action.payload.photoUrl;
     },
-    setOpenSettings(state, action) {
-      state.user.openSettings = action.payload;
+    setOpenBackdrop(state, action) {
+      state.openBackdrop = action.payload;
     },
     editUsername(state, action) {
       state.user.username = action.payload;
@@ -113,12 +113,11 @@ export const {
   login,
   logout,
   updateUserProfile,
-  setOpenSettings,
+  setOpenBackdrop,
   editDisplayName,
   editUsername,
 } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user.user;
-export const selectOpenSettings = (state: RootState) =>
-  state.user.user.openSettings;
+export const selectOpenBackdrop = (state: RootState) => state.user.openBackdrop;
 
 export default userSlice.reducer;

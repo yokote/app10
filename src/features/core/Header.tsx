@@ -4,7 +4,7 @@ import { selectUser, logout } from "../user/userSlice";
 import firebase from "firebase/app";
 import { storage } from "../../firebase";
 import { useHistory, useLocation } from "react-router-dom";
-import { setOpenSettings, updateUserProfile } from "../user/userSlice";
+import { setOpenBackdrop, updateUserProfile } from "../user/userSlice";
 
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";

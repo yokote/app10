@@ -6,14 +6,14 @@ import firebase from "firebase/app";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectUser,
-  selectOpenSettings,
-  setOpenSettings,
+  selectOpenBackdrop,
+  setOpenBackdrop,
   editUsername,
   editDisplayName,
   updateUserProfile,
 } from "../user/userSlice";
 import styles from "./Settings.module.css";
-
+import Header from "./Header";
 import Profile from "./Profile";
 
 import {
@@ -25,12 +25,13 @@ import {
   Paper,
   makeStyles,
   Box,
+  TextareaAutosize,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Avatar from "@material-ui/core/Avatar";
-import Header from "./Header";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,6 +55,13 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
+    width: theme.spacing(25),
+    height: theme.spacing(25),
+    cursor: "pointer",
+  },
+  divider: {
+    margin: theme.spacing(2),
+    width: theme.spacing(50),
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -104,6 +112,7 @@ const Settings = () => {
   };
 
   const updateAvatar = async () => {
+    await dispatch(setOpenBackdrop(true));
     let url = "";
     if (avatarImage) {
       const S =
@@ -126,6 +135,7 @@ const Settings = () => {
         photoUrl: url,
       })
     );
+    await dispatch(setOpenBackdrop(false));
   };
 
   //Modal.setAppElement("#root");
@@ -146,7 +156,7 @@ const Settings = () => {
               <Button>
                 <label>
                   <Avatar
-                    className={styles.login_addIconLoaded}
+                    className={classes.avatar}
                     alt={user.username}
                     src={user.photoUrl}
                   />{" "}
@@ -159,8 +169,15 @@ const Settings = () => {
               </Button>
             </Box>
 
-            <br />
-            <br />
+            <Divider className={classes.divider} />
+
+            <TextareaAutosize
+              rowsMax={4}
+              aria-label="selfIntroduction"
+              placeholder=""
+              defaultValue=""
+            />
+
             <Button
               variant="contained"
               color="primary"

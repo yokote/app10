@@ -6,8 +6,8 @@ import firebase from "firebase/app";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectUser,
-  selectOpenSettings,
-  setOpenSettings,
+  selectOpenBackdrop,
+  setOpenBackdrop,
   editUsername,
   editDisplayName,
   updateUserProfile,
@@ -91,7 +91,7 @@ const customStyles = {
 const SettingUsername = () => {
   const classes = useStyles();
   const user = useSelector(selectUser);
-  const openSettings = useSelector(selectOpenSettings);
+  const openSettings = useSelector(selectOpenBackdrop);
   const dispatch = useDispatch();
   const history = useHistory();
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
@@ -112,13 +112,16 @@ const SettingUsername = () => {
       setOpenModal4Err(true);
       return;
     } else {
-      db.collection("profiles")
+      //await dispatch(setOpenBackdrop(true));
+      await db
+        .collection("profiles")
         .doc(user.uid)
         .set({ username: username }, { merge: true })
         .then(() => {
           dispatch(editUsername(username));
           history.push(`/u/${username}`);
         });
+      //await dispatch(setOpenBackdrop(false));
     }
   };
 
