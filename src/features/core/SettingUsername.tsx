@@ -99,6 +99,7 @@ const SettingUsername = () => {
   const [errMessage, setErrMessage] = useState("");
   const [username, setUsername] = useState("");
 
+  // bug. ログインしていない状態で誰でもupdateできる
   const updateUsername = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
 

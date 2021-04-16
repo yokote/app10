@@ -120,6 +120,12 @@ const Auth: React.FC = () => {
 
   const signInGoogle = async () => {
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
+    if (user.username) {
+      dispatch(editUsername(user.username));
+      history.push(`/u/${user.username}`);
+    } else {
+      history.push("/settings/username");
+    }
   };
   const signInEmail = async () => {
     await auth
@@ -302,18 +308,17 @@ const Auth: React.FC = () => {
                 </span>
               </Grid>
             </Grid>
-            {/*
+
             <Button
               fullWidth
               variant="contained"
-              color="default"
+              color="primary"
               className={classes.submit}
               startIcon={<CameraIcon />}
               onClick={signInGoogle}
             >
               SignIn with Google
             </Button>
-*/}
           </form>
 
           <Modal open={openModal} onClose={() => setOpenModal(false)}>

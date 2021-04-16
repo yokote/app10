@@ -26,12 +26,14 @@ import {
   makeStyles,
   Box,
   TextareaAutosize,
+  CircularProgress,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
+import { setupMaster } from "node:cluster";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -98,7 +100,7 @@ const Settings = () => {
   const classes = useStyles();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
-
+  const [updating, setUpdating] = useState(false);
   const [openModal4Err, setOpenModal4Err] = React.useState(false);
   const [errMessage, setErrMessage] = useState("");
 
@@ -108,6 +110,8 @@ const Settings = () => {
     if (e.target.files![0]) {
       setAvatarImage(e.target.files![0]);
       e.target.value = "";
+
+      //updateAvatar();
     }
   };
 
@@ -169,6 +173,7 @@ const Settings = () => {
               </Button>
             </Box>
 
+            <CircularProgress size={68} />
             <Divider className={classes.divider} />
 
             <TextareaAutosize
