@@ -119,6 +119,7 @@ const Auth: React.FC = () => {
   };
 
   const signInGoogle = async () => {
+    // TODO. ログインする度にusername画面になる
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
     if (user.username) {
       dispatch(editUsername(user.username));

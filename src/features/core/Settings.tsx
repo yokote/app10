@@ -15,7 +15,7 @@ import {
 import styles from "./Settings.module.css";
 import Header from "./Header";
 import Profile from "./Profile";
-
+import { green } from "@material-ui/core/colors";
 import {
   Button,
   TextField,
@@ -27,6 +27,9 @@ import {
   Box,
   TextareaAutosize,
   CircularProgress,
+  FormControl,
+  FormHelperText,
+  InputLabel,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
@@ -54,16 +57,29 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
   },
+  divider: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(2),
+  },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
     width: theme.spacing(25),
     height: theme.spacing(25),
     cursor: "pointer",
   },
-  divider: {
-    margin: theme.spacing(2),
-    width: theme.spacing(50),
+  wrapper: {
+    position: "relative",
+  },
+  buttonProgress: {
+    color: green[500],
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
+  selfIntroduction: {
+    width: theme.spacing(40),
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -83,19 +99,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const customStyles = {
-  content: {
-    top: "55%",
-    left: "50%",
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
 
-    width: 280,
-    height: 350,
-    padding: "50px",
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
 
-    transform: "translate(-50%, -50%)",
-  },
-};
-
+const createObjectURL = (window as any).webkitURL.createObjectURL;
 const Settings = () => {
   const classes = useStyles();
   const user = useSelector(selectUser);
@@ -105,10 +120,12 @@ const Settings = () => {
   const [errMessage, setErrMessage] = useState("");
 
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
+  const [avatarSrc, setAvatarSrc] = useState();
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
       setAvatarImage(e.target.files![0]);
+      setAvatarSrc(createObjectURL(e.target.files![0]));
       e.target.value = "";
 
       //updateAvatar();
@@ -116,7 +133,7 @@ const Settings = () => {
   };
 
   const updateAvatar = async () => {
-    await dispatch(setOpenBackdrop(true));
+    //await dispatch(setOpenBackdrop(true));
     let url = "";
     if (avatarImage) {
       const S =
@@ -139,7 +156,7 @@ const Settings = () => {
         photoUrl: url,
       })
     );
-    await dispatch(setOpenBackdrop(false));
+    //await dispatch(setOpenBackdrop(false));
   };
 
   //Modal.setAppElement("#root");
@@ -152,45 +169,122 @@ const Settings = () => {
         <Grid item xs={false} sm={4} md={7} className={classes.image} />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <div className={classes.paper}>
+            {/*
+            <Modal open={true} onClose={() => setOpenModal4Err(false)}>
+              <div style={getModalStyle()}>
+                <Alert severity="error">{errMessage}</Alert>
+              </div>
+            </Modal>
+             */}
+            {/*
             <Collapse in={openModal4Err}>
-              <Alert severity="error">{errMessage}</Alert>
+              <div style={getModalStyle()}>
+                <Alert severity="error">{errMessage}</Alert>
+              </div>
             </Collapse>
+            */}
 
-            <Box textAlign="center">
-              <Button>
-                <label>
-                  <Avatar
-                    className={classes.avatar}
-                    alt={user.username}
-                    src={user.photoUrl}
-                  />{" "}
-                  <input
-                    className={styles.login_hiddenIcon}
-                    type="file"
-                    onChange={onChangeImageHandler}
-                  />
-                </label>
-              </Button>
-            </Box>
+            <Grid container spacing={2} alignItems="flex-end">
+              <Grid item xs>
+                <Box textAlign="center">
+                  <Button>
+                    <label>
+                      <Avatar
+                        className={classes.avatar}
+                        alt={user.username}
+                        src={avatarSrc || user.photoUrl}
+                      />{" "}
+                      <input
+                        className={styles.login_hiddenIcon}
+                        type="file"
+                        onChange={onChangeImageHandler}
+                      />
+                    </label>
+                  </Button>
+                </Box>
+              </Grid>
+              <Grid item>
+                <div className={classes.wrapper}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={async () => {
+                      await setUpdating(true);
+                      await updateAvatar();
+                      await setUpdating(false);
+                    }}
+                  >
+                    Update
+                  </Button>
+                  {updating && (
+                    <CircularProgress
+                      size={24}
+                      className={classes.buttonProgress}
+                    />
+                  )}
+                </div>
+              </Grid>{" "}
+            </Grid>
 
-            <CircularProgress size={68} />
-            <Divider className={classes.divider} />
+            <Grid container spacing={2}>
+              <Grid item xs>
+                <Divider className={classes.divider} />
+              </Grid>
+            </Grid>
 
-            <TextareaAutosize
-              rowsMax={4}
-              aria-label="selfIntroduction"
-              placeholder=""
-              defaultValue=""
-            />
+            <Grid container spacing={10} justify="center" alignItems="center">
+              <Grid item xs>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="displayName"
+                  label="名前"
+                  name="displayName"
+                  autoComplete="displayName"
+                  autoFocus
+                  value={""}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    //setDisplayName(e.target.value);
+                  }}
+                />
+              </Grid>{" "}
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={updateAvatar}
+                >
+                  Update
+                </Button>
+              </Grid>
+            </Grid>
 
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={updateAvatar}
-            >
-              Update
-            </Button>
+            <Grid container spacing={10} justify="center" alignItems="center">
+              <Grid item xs className={classes.selfIntroduction}>
+                <TextField
+                  id="selfIntroduction"
+                  variant="outlined"
+                  label="自己紹介"
+                  multiline
+                  fullWidth
+                  rows={4}
+                  defaultValue=""
+                />
+              </Grid>{" "}
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={() => setOpenModal4Err(true)}
+                >
+                  Update
+                </Button>
+              </Grid>
+            </Grid>
           </div>
         </Grid>
       </Grid>
