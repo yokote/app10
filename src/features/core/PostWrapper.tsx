@@ -1,20 +1,72 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import Post from "./Post";
+import styles from "./PostWrapper.module.css";
+import { db } from "../../firebase";
+import Header from "./Header";
+import Profile from "./Profile";
 
-interface PROPS {
-  postId: string;
-}
+import { POST } from "../types";
 
-const PostWrapper: React.FC<PROPS> = (props) => {
-  /*
-    CollectionReferenceのdocメソッド の引数で、ドキュメントIDを指定することもできます
-    const userRef = db.collection('users').doc('abcdefg')
-    await userRef.set({
-      name1: 'xxxxx',
-      name2: 'yyyyy',
-    })
+// ファイル名変えたい
+const PostWrapper: React.FC = () => {
+  const { username, postId } = useParams<{
+    username: string;
+    postId: string;
+  }>();
 
-*/
-  return <div>test</div>;
+  const [post, setPost] = useState({
+    id: "",
+    avatar: "",
+    image: "",
+    text: "",
+    timestamp: null,
+    username: "",
+  });
+
+  useEffect(() => {
+    const unSub = db
+      .collection("users")
+      .doc(username)
+      .collection("posts")
+      .doc(postId)
+      .get()
+      .then((snapshot) => {
+        const doc = snapshot.data() as POST;
+        setPost({
+          id: snapshot.id,
+          avatar: doc.avatar,
+          image: doc.image,
+          text: doc.text,
+          timestamp: doc.timestamp,
+          username: doc.username,
+        });
+      });
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <div className={styles.app}>
+        <div className={styles.feed}>
+          <Profile />
+          {post?.id && (
+            <>
+              <Post
+                key={post.id}
+                postId={post.id}
+                avatar={post.avatar}
+                image={post.image}
+                text={post.text}
+                timestamp={post.timestamp}
+                username={post.username}
+              />
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default PostWrapper;

@@ -21,6 +21,7 @@ const PostInput: React.FC = () => {
 
   const sendPost = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    /*
     if (postImage) {
       const S =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -63,6 +64,16 @@ const PostInput: React.FC = () => {
     }
     setPostImage(null);
     setPostMsg("");
+    */
+
+    db.collection("users").doc(user.username).collection("posts").add({
+      username: user.username,
+      avatar: user.photoUrl,
+      text: postMsg,
+      image: "",
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setPostMsg("");
   };
 
   return (
@@ -73,7 +84,7 @@ const PostInput: React.FC = () => {
             className={styles.post_avatar}
             src={user.photoUrl}
             onClick={async () => {
-              await auth.signOut();
+              //await auth.signOut();
             }}
           />
           <input
@@ -84,6 +95,7 @@ const PostInput: React.FC = () => {
             value={postMsg}
             onChange={(e) => setPostMsg(e.target.value)}
           />
+          {/*
           <IconButton>
             <label>
               <AddAPhotoIcon
@@ -98,8 +110,8 @@ const PostInput: React.FC = () => {
               />
             </label>
           </IconButton>
+              */}
         </div>
-
         <Button
           type="submit"
           disabled={!postMsg}

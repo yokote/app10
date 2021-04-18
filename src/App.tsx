@@ -18,7 +18,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import Core from "./features/core/Core";
+import Feed from "./features/core/Feed";
 import SettingUsername from "./features/core/SettingUsername";
 import Settings from "./features/core/Settings";
 import PostWrapper from "./features/core/PostWrapper";
@@ -76,7 +76,7 @@ const App: React.FC = () => {
           <Route exact path="/">
             <Auth />
           </Route>
-          <Route exact path="/u/:username" component={Core} />
+          <Route exact path="/u/:username" component={Feed} />
           <Route exact path="/p/:username/:postId" component={PostWrapper} />
           <Route exact path="/settings" component={Settings} />
           <Route exact path="/settings/username" component={SettingUsername} />
