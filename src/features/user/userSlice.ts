@@ -9,6 +9,7 @@ interface USER {
 
 interface MYPROFILE {
   username: "";
+  selfIntroduction: "";
 }
 
 interface PROFILE {
@@ -29,17 +30,9 @@ export const fetchAsyncGetMyProf = createAsyncThunk(
           return snapshot.data() as MYPROFILE;
         } else {
           //api.dispatch(setOpenSettings(true));
-          return { username: "" };
+          return { username: "", selfIntroduction: "" };
         }
       });
-    /*
-      .catch(() => {
-        return api.rejectWithValue({
-          status: -1,
-          message: "error",
-        });
-      });
-      */
   }
 );
 
@@ -63,6 +56,7 @@ export const userSlice = createSlice({
       photoUrl: "",
       displayName: "",
       username: "",
+      selfIntroduction: "",
     },
     profile: {
       userProfile: "",
@@ -81,6 +75,7 @@ export const userSlice = createSlice({
         photoUrl: "",
         displayName: "",
         username: "",
+        selfIntroduction: "",
       };
       state.openBackdrop = false;
     },
@@ -97,10 +92,14 @@ export const userSlice = createSlice({
     editDisplayName(state, action) {
       state.user.displayName = action.payload;
     },
+    editSelfIntroduction(state, action) {
+      state.user.selfIntroduction = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncGetMyProf.fulfilled, (state, action) => {
       state.user.username = action.payload.username;
+      state.user.selfIntroduction = action.payload.selfIntroduction;
     });
     builder.addCase(fetchAsyncGetProf.fulfilled, (state, action) => {
       state.profile = action.payload;
@@ -115,6 +114,7 @@ export const {
   setOpenBackdrop,
   editDisplayName,
   editUsername,
+  editSelfIntroduction,
 } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user.user;
 export const selectOpenBackdrop = (state: RootState) => state.user.openBackdrop;

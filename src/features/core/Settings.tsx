@@ -8,7 +8,7 @@ import {
   selectUser,
   selectOpenBackdrop,
   setOpenBackdrop,
-  editUsername,
+  editSelfIntroduction,
   editDisplayName,
   updateUserProfile,
 } from "../user/userSlice";
@@ -118,9 +118,30 @@ const Settings = () => {
   const [updating, setUpdating] = useState(false);
   const [openModal4Err, setOpenModal4Err] = React.useState(false);
   const [errMessage, setErrMessage] = useState("");
-
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const [avatarSrc, setAvatarSrc] = useState();
+  //const [displayName, setDisplayName] = useState(user.displayName);
+  //const [selfIntroduction, setSelfIntroduction] = useState("");
+
+  const updateDisplayName = () => {
+    firebase
+      .auth()
+      .currentUser?.updateProfile({
+        displayName: user.displayName,
+      })
+      .then(() => {
+        //dispatch(editDisplayName(displayName));
+      });
+  };
+
+  const updateSelfIntroduction = () => {
+    db.collection("profiles")
+      .doc(user.uid)
+      .set({ selfIntroduction: user.selfIntroduction }, { merge: true })
+      .then(() => {
+        //dispatch(editSelfIntroduction(selfIntroduction));
+      });
+  };
 
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files![0]) {
@@ -169,21 +190,6 @@ const Settings = () => {
         <Grid item xs={false} sm={4} md={7} className={classes.image} />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <div className={classes.paper}>
-            {/*
-            <Modal open={true} onClose={() => setOpenModal4Err(false)}>
-              <div style={getModalStyle()}>
-                <Alert severity="error">{errMessage}</Alert>
-              </div>
-            </Modal>
-             */}
-            {/*
-            <Collapse in={openModal4Err}>
-              <div style={getModalStyle()}>
-                <Alert severity="error">{errMessage}</Alert>
-              </div>
-            </Collapse>
-            */}
-
             <Grid container spacing={2} alignItems="flex-end">
               <Grid item xs>
                 <Box textAlign="center">
@@ -232,6 +238,10 @@ const Settings = () => {
               </Grid>
             </Grid>
 
+            <Collapse in={openModal4Err}>
+              <Alert severity="error">{errMessage}</Alert>
+            </Collapse>
+
             <Grid container spacing={10} justify="center" alignItems="center">
               <Grid item xs>
                 <TextField
@@ -243,10 +253,10 @@ const Settings = () => {
                   label="名前"
                   name="displayName"
                   autoComplete="displayName"
-                  autoFocus
-                  value={""}
+                  value={user.displayName}
+                  //defaultValue={user.displayName}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    //setDisplayName(e.target.value);
+                    dispatch(editDisplayName(e.target.value));
                   }}
                 />
               </Grid>{" "}
@@ -255,7 +265,11 @@ const Settings = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={updateAvatar}
+                  onClick={async () => {
+                    await setUpdating(true);
+                    await updateDisplayName();
+                    await setUpdating(false);
+                  }}
                 >
                   Update
                 </Button>
@@ -270,8 +284,13 @@ const Settings = () => {
                   label="自己紹介"
                   multiline
                   fullWidth
-                  rows={4}
-                  defaultValue=""
+                  rows={3}
+                  value={user.selfIntroduction}
+                  //defaultValue={user.selfIntroduction}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    //setSelfIntroduction(e.target.value);
+                    dispatch(editSelfIntroduction(e.target.value));
+                  }}
                 />
               </Grid>{" "}
               <Grid item>
@@ -279,7 +298,11 @@ const Settings = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  onClick={() => setOpenModal4Err(true)}
+                  onClick={async () => {
+                    await setUpdating(true);
+                    await updateSelfIntroduction();
+                    await setUpdating(false);
+                  }}
                 >
                   Update
                 </Button>
