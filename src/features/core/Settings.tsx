@@ -36,7 +36,7 @@ import Collapse from "@material-ui/core/Collapse";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
-import { setupMaster } from "node:cluster";
+//import { setupMaster } from "node:cluster";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -136,7 +136,7 @@ const Settings = () => {
 
   const updateSelfIntroduction = () => {
     db.collection("profiles")
-      .doc(user.uid)
+      .doc(user.username)
       .set({ selfIntroduction: user.selfIntroduction }, { merge: true })
       .then(() => {
         //dispatch(editSelfIntroduction(selfIntroduction));
