@@ -24,4 +24,5 @@ yarn-error.log*
 
 .env
 .firebaserc
-.log
+*.log
+hosting.*.cache
