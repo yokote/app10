@@ -189,6 +189,7 @@ const Auth: React.FC = () => {
           </Collapse>
           {!isLogin && (
             <>
+              {/*
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -204,6 +205,7 @@ const Auth: React.FC = () => {
                   setDisplayName(e.target.value);
                 }}
               />
+              */}
               {/*
               <Box textAlign="center">
                 <IconButton>
@@ -259,11 +261,7 @@ const Auth: React.FC = () => {
               }}
             />
             <Button
-              disabled={
-                isLogin
-                  ? !email || password.length < 1
-                  : !displayName || !email || password.length < 1
-              }
+              disabled={!email || password.length < 1}
               fullWidth
               variant="contained"
               color="primary"
@@ -295,12 +293,14 @@ const Auth: React.FC = () => {
 
             <Grid container>
               <Grid item xs>
-                <span
-                  className={styles.login_reset}
-                  onClick={() => setOpenModal(true)}
-                >
-                  Forgot password ?
-                </span>
+                {isLogin && (
+                  <span
+                    className={styles.login_reset}
+                    onClick={() => setOpenModal(true)}
+                  >
+                    Forgot password ?
+                  </span>
+                )}
               </Grid>
               <Grid item>
                 <span
@@ -311,17 +311,18 @@ const Auth: React.FC = () => {
                 </span>
               </Grid>
             </Grid>
-
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              startIcon={<CameraIcon />}
-              onClick={signInGoogle}
-            >
-              SignIn with Google
-            </Button>
+            {isLogin && (
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                startIcon={<CameraIcon />}
+                onClick={signInGoogle}
+              >
+                SignIn with Google
+              </Button>
+            )}
           </form>
 
           <Modal open={openModal} onClose={() => setOpenModal(false)}>
