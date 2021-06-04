@@ -5,6 +5,7 @@ export interface POST {
   text: string;
   timestamp: any;
   username: string;
+  displayname: string;
 }
 
 export interface COMMENT {
@@ -13,4 +14,5 @@ export interface COMMENT {
   text: string;
   timestamp: any;
   username: string;
+  displayname: string;
 }

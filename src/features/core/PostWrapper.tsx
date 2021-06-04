@@ -10,10 +10,11 @@ import { POST } from "../types";
 
 // ファイル名変えたい
 const PostWrapper: React.FC = () => {
-  const { username, postId } = useParams<{
-    username: string;
-    postId: string;
-  }>();
+  const { username, postId } =
+    useParams<{
+      username: string;
+      postId: string;
+    }>();
 
   const [post, setPost] = useState({
     id: "",
@@ -22,6 +23,7 @@ const PostWrapper: React.FC = () => {
     text: "",
     timestamp: null,
     username: "",
+    displayname: "",
   });
 
   useEffect(() => {
@@ -40,6 +42,7 @@ const PostWrapper: React.FC = () => {
           text: doc.text,
           timestamp: doc.timestamp,
           username: doc.username,
+          displayname: doc.displayname,
         });
       });
   }, []);
@@ -60,6 +63,7 @@ const PostWrapper: React.FC = () => {
                 text={post.text}
                 timestamp={post.timestamp}
                 username={post.username}
+                displayname={post.displayname}
               />
             </>
           )}

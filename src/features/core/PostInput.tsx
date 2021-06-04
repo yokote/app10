@@ -68,6 +68,7 @@ const PostInput: React.FC = () => {
 
     db.collection("users").doc(user.username).collection("posts").add({
       username: user.username,
+      displayname: user.displayName,
       avatar: user.photoUrl,
       text: postMsg,
       image: "",

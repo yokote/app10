@@ -29,6 +29,7 @@ const Post: React.FC<POST> = (props) => {
       avatar: "",
       text: "",
       username: "",
+      displayname: "",
       timestamp: null,
     },
   ]);
@@ -46,6 +47,7 @@ const Post: React.FC<POST> = (props) => {
             avatar: doc.data().avatar,
             text: doc.data().text,
             username: doc.data().username,
+            displayname: doc.data().displayname,
             timestamp: doc.data().timestamp,
           }))
         );
@@ -77,7 +79,9 @@ const Post: React.FC<POST> = (props) => {
         <div>
           <div className={styles.post_header}>
             <h3>
-              <span className={styles.post_headerUser}>@{props.username}</span>
+              <span className={styles.post_headerUser}>
+                {props.displayname}@{props.username}
+              </span>
               <span className={styles.post_headerTime}>
                 {new Date(props.timestamp?.toDate()).toLocaleString()}
               </span>
@@ -89,7 +93,7 @@ const Post: React.FC<POST> = (props) => {
         </div>
         {props.image && (
           <div className={styles.post_tweetImage}>
-            <img src={props.image} alt="tweet" />
+            <img src={props.image} alt="posts" />
           </div>
         )}
 

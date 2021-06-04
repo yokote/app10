@@ -20,6 +20,7 @@ const Feed: React.FC = (props) => {
       text: "",
       timestamp: null,
       username: "",
+      displayname: "",
     },
   ]);
 
@@ -38,6 +39,7 @@ const Feed: React.FC = (props) => {
             text: doc.data().text,
             timestamp: doc.data().timestamp,
             username: doc.data().username,
+            displayname: doc.data().displayname,
           }))
         )
       );
@@ -63,6 +65,7 @@ const Feed: React.FC = (props) => {
                   text={post.text}
                   timestamp={post.timestamp}
                   username={post.username}
+                  displayname={post.displayname}
                 />
               ))}
             </>
