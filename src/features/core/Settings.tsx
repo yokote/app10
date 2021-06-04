@@ -136,7 +136,7 @@ const Settings = () => {
 
   const updateSelfIntroduction = () => {
     db.collection("profiles")
-      .doc(user.username)
+      .doc(user.uid)
       .set({ selfIntroduction: user.selfIntroduction }, { merge: true })
       .then(() => {
         //dispatch(editSelfIntroduction(selfIntroduction));

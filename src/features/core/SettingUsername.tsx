@@ -97,7 +97,7 @@ const SettingUsername = () => {
     } else {
       await db
         .collection("profiles")
-        .doc(username)
+        .doc(user.uid)
         .set({ username: username }, { merge: true })
         .then(() => {
           dispatch(editUsername(username));

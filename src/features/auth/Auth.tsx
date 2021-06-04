@@ -119,14 +119,32 @@ const Auth: React.FC = () => {
   };
 
   const signInGoogle = async () => {
-    // TODO. ログインする度にusername画面になる
     await auth.signInWithPopup(provider).catch((err) => alert(err.message));
+    const profile = await db
+      .collection("profiles")
+      .doc(auth.currentUser!.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          return snapshot.data() as MYPROFILE;
+        } else {
+          return { username: "" };
+        }
+      });
+    if (profile.username) {
+      dispatch(editUsername(profile.username));
+      history.push(`/u/${profile.username}`);
+    } else {
+      history.push("/settings/username");
+    }
+    /*
     if (user.username) {
       dispatch(editUsername(user.username));
       history.push(`/u/${user.username}`);
     } else {
       history.push("/settings/username");
     }
+    */
   };
   const signInEmail = async () => {
     await dispatch(setOpenBackdrop(true));
